@@ -1,0 +1,22 @@
+{
+  "name": "bullmq-bun-bench",
+  "version": "1.0.0",
+  "description": "Benchmark comparing BullMQ performance on Node.js vs Bun",
+  "type": "module",
+  "scripts": {
+    "bench:node": "node benchmark.js",
+    "bench:bun": "bun run benchmark.js",
+    "bench:node:ts": "npx tsx runtime-comparison.ts",
+    "bench:bun:ts": "bun run runtime-comparison.ts"
+  },
+  "dependencies": {
+    "bullmq": "^5.0.0",
+    "ioredis": "^5.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": ["bullmq", "benchmark", "bun", "nodejs"],
+  "license": "MIT"
+}
