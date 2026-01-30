@@ -51,40 +51,6 @@ npm run bench:bun:ts
 3. **Job Processing** - Processing 1000 jobs with concurrency=10
 4. **Flow Producer** - Creating 100 flows with 2 children each
 
-## Sample Results
-
-### Node.js v24.13.0
-```
-Add Jobs:    38,462 jobs/sec
-Bulk Add:    37,879 jobs/sec
-Processing:  24,390 jobs/sec
-Flows:       25,896 jobs/sec
-```
-
-### Bun 1.3.3
-```
-Add Jobs:    45,872 jobs/sec
-Bulk Add:    45,872 jobs/sec
-Processing:  21,008 jobs/sec
-Flows:       17,415 jobs/sec
-```
-
-## Key Findings
-
-| Benchmark | Winner | Difference |
-|-----------|--------|------------|
-| Job Addition | 🏆 Bun | ~20% faster |
-| Bulk Addition | 🏆 Bun | ~21% faster |
-| Job Processing | 🏆 Node.js | ~16% faster |
-| CPU-intensive Work | 🏆 Bun | ~59% faster |
-| Flow Producer | varies | depends on run |
-
-### Summary
-
-- **Bun excels** at queue operations (add/addBulk) and CPU-intensive work
-- **Node.js** can be faster for I/O-heavy worker processing
-- Both runtimes work well with BullMQ — choose based on your workload
-
 ## Environment Variables
 
 - `REDIS_HOST` - Redis host (default: `localhost`)
