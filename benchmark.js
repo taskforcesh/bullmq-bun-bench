@@ -47,6 +47,35 @@ async function benchmarkAddJobs(count) {
   return { duration, jobsPerSecond, count };
 }
 
+// Benchmark: Adding jobs in parallel batches (Promise.all)
+async function benchmarkAddJobsParallel(count, batchSize = 1000) {
+  const queueName = `bench-add-parallel-${Date.now()}`;
+  const queue = new Queue(queueName, { connection });
+
+  const start = performance.now();
+
+  for (let i = 0; i < count; i += batchSize) {
+    const currentBatchSize = Math.min(batchSize, count - i);
+    const promises = [];
+
+    for (let j = 0; j < currentBatchSize; j++) {
+      promises.push(
+        queue.add('test-job', { index: i + j, data: 'x'.repeat(100) })
+      );
+    }
+
+    await Promise.all(promises);
+  }
+
+  const duration = performance.now() - start;
+  const jobsPerSecond = (count / duration) * 1000;
+
+  await queue.obliterate({ force: true });
+  await queue.close();
+
+  return { duration, jobsPerSecond, count, batchSize };
+}
+
 // Benchmark: Bulk adding jobs
 async function benchmarkBulkAdd(count) {
   const queueName = `bench-bulk-${Date.now()}`;
@@ -151,6 +180,13 @@ async function runBenchmarks() {
   console.log(`   Duration: ${formatDuration(addResult.duration)}`);
   console.log(`   Throughput: ${formatNumber(addResult.jobsPerSecond)} jobs/sec`);
   results.addJobs = addResult;
+
+  // 1.1 Add jobs in parallel batches
+  console.log('\n🧵 Benchmark: Adding jobs in parallel (100000 jobs, batch=1000)');
+  const addParallelResult = await benchmarkAddJobsParallel(100000, 1000);
+  console.log(`   Duration: ${formatDuration(addParallelResult.duration)}`);
+  console.log(`   Throughput: ${formatNumber(addParallelResult.jobsPerSecond)} jobs/sec`);
+  results.addJobsParallel = addParallelResult;
   
   // 2. Bulk add jobs
   console.log('\n📦 Benchmark: Bulk adding jobs (5000 jobs)');
@@ -178,6 +214,7 @@ async function runBenchmarks() {
   console.log(`📊 Summary for ${runtime} ${runtimeVersion}`);
   console.log('='.repeat(50));
   console.log(`Add Jobs:    ${formatNumber(results.addJobs.jobsPerSecond)} jobs/sec`);
+  console.log(`Add Parallel:${formatNumber(results.addJobsParallel.jobsPerSecond)} jobs/sec`);
   console.log(`Bulk Add:    ${formatNumber(results.bulkAdd.jobsPerSecond)} jobs/sec`);
   console.log(`Processing:  ${formatNumber(results.processing.jobsPerSecond)} jobs/sec`);
   console.log(`Flows:       ${formatNumber(results.flows.flowsPerSecond)} flows/sec`);

@@ -1,22 +1,31 @@
 {
   "name": "bullmq-bun-bench",
   "version": "1.0.0",
-  "description": "Benchmark comparing BullMQ performance on Node.js vs Bun",
+  "description": "Benchmark comparing BullMQ performance across runtimes and Redis client adapters",
   "type": "module",
   "scripts": {
     "bench:node": "node benchmark.js",
     "bench:bun": "bun run benchmark.js",
     "bench:node:ts": "npx tsx runtime-comparison.ts",
-    "bench:bun:ts": "bun run runtime-comparison.ts"
+    "bench:bun:ts": "bun run runtime-comparison.ts",
+    "bench:adapter:ioredis": "ADAPTER=ioredis npx tsx adapter-comparison.ts",
+    "bench:adapter:node-redis": "ADAPTER=node-redis npx tsx adapter-comparison.ts",
+    "bench:adapter:node-redis:resp3": "ADAPTER=node-redis PROTOCOL=3 npx tsx adapter-comparison.ts",
+    "bench:adapter:bun": "ADAPTER=bun bun run adapter-comparison.ts",
+    "proof:multi-exec": "bun run multi-exec-proof.ts",
+    "proof:pipelined": "bun run pipelined-proof.ts",
+    "proof:resp2-vs-resp3": "bun run resp2-vs-resp3-proof.ts",
+    "proof:resp3-sanity": "bun run resp3-sanity-check.ts"
   },
   "dependencies": {
-    "bullmq": "^5.0.0",
-    "ioredis": "^5.0.0"
+    "bullmq": "^5.77.1",
+    "ioredis": "^5.0.0",
+    "redis": "^5.0.0"
   },
   "devDependencies": {
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   },
-  "keywords": ["bullmq", "benchmark", "bun", "nodejs"],
+  "keywords": ["bullmq", "benchmark", "bun", "nodejs", "node-redis", "ioredis"],
   "license": "MIT"
 }
